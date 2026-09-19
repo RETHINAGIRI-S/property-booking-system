@@ -2,34 +2,17 @@
   "name": "property-booking-system",
   "version": "1.0.0",
   "description": "",
-  "main": "backend/index.js",
+  "main": "index.js",
   "scripts": {
-    "start": "npm start --prefix backend",
-    "server": "npm run dev --prefix backend",
-    "seed": "npm run seed --prefix backend",
-    "seed:delete": "npm run seed:delete --prefix backend",
-    "client": "npm run dev --prefix frontend",
-    "build": "npm run build --prefix frontend",
-    "dev": "concurrently -n \"SERVER,CLIENT\" -c \"blue,green\" \"npm run server\" \"npm run client\""
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev":"node backend/index.js",
+    "start":"node backend/index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "module",
   "dependencies": {
-    "bcryptjs": "^3.0.3",
-    "concurrently": "^10.0.5",
-    "cookie-parser": "^1.4.7",
-    "cors": "^2.8.6",
-    "dotenv": "^17.4.2",
-    "express": "^5.2.1",
-    "groq-sdk": "^1.6.0",
-    "imagekit": "^6.0.0",
-    "jsonwebtoken": "^9.0.3",
-    "mailgen": "^2.0.36",
-    "mongoose": "^9.10.1",
-    "nodemailer": "^10.0.10",
-    "slugify": "^1.6.9",
-    "validator": "^13.15.35"
+    "express": "^5.2.1"
   }
 }
