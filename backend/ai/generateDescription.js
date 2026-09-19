@@ -39,8 +39,23 @@ const readAddress = (address) => {
     .join(", ");
 };
 
+const fallbackGenerateDescription = (property) => {
+  const name = property.propertyName || "This cozy property";
+  const type = property.propertyType || "stay";
+  const room = property.roomType ? ` offering ${property.roomType.toLowerCase()} accommodation` : "";
+  const location = property.address?.city ? ` located in ${property.address.city}` : "";
+  const guests = property.maximumGuest ? ` for up to ${property.maximumGuest} guests` : "";
+  const amenitiesList = listAmenities(property.amenities);
+  const perks = amenitiesList !== "Not provided" ? ` Guests can enjoy convenient amenities including ${amenitiesList}.` : "";
+  const extra = property.extraInfo ? ` ${property.extraInfo}.` : "";
+
+  return `Welcome to ${name}, a wonderful ${type}${room}${location}${guests}.${perks}${extra} Perfect for a relaxing holiday and comfortable stay.`;
+};
+
 const generateDescription = async (property) => {
-  const propertyInfo = `- Property Name: ${property.propertyName}
+  if (process.env.GROQ_API_KEY && process.env.GROQ_API_KEY !== "dummy_key") {
+    try {
+      const propertyInfo = `- Property Name: ${property.propertyName}
 - Extra Information: ${property.extraInfo || "Not provided"}
 - Property Type: ${property.propertyType}
 - Room Type: ${property.roomType}
@@ -49,16 +64,23 @@ const generateDescription = async (property) => {
 - Price per Night: ${property.price}
 - Address: ${readAddress(property.address)}`;
 
-  const completion = await groq.chat.completions.create({
-    model: "openai/gpt-oss-120b",
-    max_tokens: 500,
-    messages: [
-      { role: "system", content: systemPrompt },
-      { role: "user", content: propertyInfo },
-    ],
-  });
+      const completion = await groq.chat.completions.create({
+        model: "llama-3.3-70b-versatile",
+        max_tokens: 500,
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: propertyInfo },
+        ],
+      });
 
-  return completion.choices[0].message.content.trim();
+      return completion.choices[0].message.content.trim();
+    } catch (err) {
+      console.warn("Groq description API error, using smart fallback:", err.message);
+      return fallbackGenerateDescription(property);
+    }
+  }
+
+  return fallbackGenerateDescription(property);
 };
 
 export { generateDescription };
