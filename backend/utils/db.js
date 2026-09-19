@@ -9,6 +9,9 @@ try {
 }
 
 const connectDB = async () => {
+  if (mongoose.connection.readyState >= 1) {
+    return mongoose.connection;
+  }
   try {
     if (!process.env.MONGO_URI || process.env.MONGO_URI.includes("<db_username>")) {
       console.warn("MongoDB URI contains placeholder credentials. Please update .env with your actual username and password.");
@@ -16,6 +19,7 @@ const connectDB = async () => {
     }
     const conn = await mongoose.connect(process.env.MONGO_URI);
     console.log(`✅ MongoDB Connected: ${conn.connection.host}`);
+    return conn;
   } catch (error) {
     console.error(`❌ MongoDB Connection Error: ${error.message}`);
   }
